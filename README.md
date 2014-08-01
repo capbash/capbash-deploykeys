@@ -25,7 +25,9 @@ Now you can install nginx into your project
 The available configurations include:
 
 ```
-DEPLOYKEYS_NAME=${DEPLOYKEYS_NAME-id_dsa}
+DEPLOYKEYS_USER=${DEPLOYKEYS_NAME-root}
+DEPLOYKEYS_KEYNAME=${DEPLOYKEYS_KEYNAME-id_dsa}
+DEPLOYKEYS_KNOWN_HOSTS=${DEPLOYKEYS_NAME-known_hosts}
 ```
 
 # Deploy to Remote Server #
