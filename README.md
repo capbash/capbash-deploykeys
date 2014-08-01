@@ -14,7 +14,7 @@ cd YOUR_REPO_ROOT
 ./bootstrap
 ```
 
-Now you can install nginx into your project
+Now you can install deploykeys into your project
 
 ```
 ./capbash install deploykeys
