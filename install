@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#-----------
+# Configurations
+#-----------
+
+DEPLOYKEYS_USER=${DEPLOYKEYS_NAME-root}
+DEPLOYKEYS_KEYNAME=${DEPLOYKEYS_KEYNAME-id_dsa}
+DEPLOYKEYS_KNOWN_HOSTS=${DEPLOYKEYS_NAME-known_hosts}
+
+#-----------
+# Install Script
+#-----------
+
+USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
+
+mkdir -p ${USER_HOME}/.ssh
+
+if [[ -e ./assets/${DEPLOYKEYS_KEYNAME} ]]; then
+  cp ./assets/${DEPLOYKEYS_KEYNAME} ${USER_HOME}/.ssh/
+  cp ./assets/${DEPLOYKEYS_KEYNAME}.pub ${USER_HOME}/.ssh/
+fi
+
+if [[ -e ./assets/${DEPLOYKEYS_KNOWN_HOSTS} ]]; then
+  cp ./assets/${DEPLOYKEYS_KNOWN_HOSTS} ${USER_HOME}/.ssh/known_hosts
+fi
