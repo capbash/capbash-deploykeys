@@ -7,8 +7,7 @@
 DEPLOYKEYS_USER=${DEPLOYKEYS_NAME-root}
 DEPLOYKEYS_KEYNAME=${DEPLOYKEYS_KEYNAME-id_dsa}
 DEPLOYKEYS_KNOWN_HOSTS=${DEPLOYKEYS_NAME-known_hosts}
-
-DEPLOYKEYS_ADD_GITHUB=${DEPLOYKEYS_ADD_GITHUB-true}
+DEPLOYKEYS_ADD_GITHUB=${DEPLOYKEYS_ADD_GITHUB-false}
 
 
 #-----------
@@ -33,8 +32,7 @@ if [[ -e ./assets/${DEPLOYKEYS_KNOWN_HOSTS} ]]; then
 fi
 
 if [[ "$DEPLOYKEYS_ADD_GITHUB" == true ]]; then
-  echo "  -- Adding github to ${USER_HOME}/.ssh/known_hosts"
-  ssh-keyscan -H github.com > ${USER_HOME}/.ssh/known_hosts
+  DEPLOYKEYS_HOSTNAME=github DEPLOYKEYS_URL=github.com ./submodules/deploykeys/add
 fi
 
 echo "DONE, Installing deploykeys."

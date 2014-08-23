@@ -1,0 +1,12 @@
+#!/bin/bash
+
+DEPLOYKEYS_HOSTNAME=${DEPLOYKEYS_URL-github}
+DEPLOYKEYS_HOSTURL=${DEPLOYKEYS_URL-github.com}
+
+#-----------
+# Configurations
+#-----------
+
+echo "Adding $DEPLOYKEYS_HOSTNAME to ${USER_HOME}/.ssh/known_hosts"
+ssh-keyscan -H $DEPLOYKEYS_HOSTURL > ${USER_HOME}/.ssh/known_hosts
+echo "DONE, Adding $DEPLOYKEYS_HOSTNAME to ${USER_HOME}/.ssh/known_hosts"
