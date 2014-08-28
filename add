@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#-----------
+# Configurations
+#-----------
+
+DEPLOYKEYS_USER=${DEPLOYKEYS_NAME-root}
 DEPLOYKEYS_HOSTNAME=${DEPLOYKEYS_URL-github}
 DEPLOYKEYS_HOSTURL=${DEPLOYKEYS_URL-github.com}
 
