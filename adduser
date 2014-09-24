@@ -1,0 +1,47 @@
+#!/bin/bash
+
+#-----------
+# Configurations
+#-----------
+
+USER=${USER-deployer}
+GROUP=${GROUP-www-data}
+SSHKEYS=${SSHKEYS=false}
+
+#-----------
+# Install Script
+#-----------
+
+if [[ ! -e /home/$USER ]]; then
+  echo "  -- Creating $USER user"
+  if [[ "$OS" == "ubuntu" ]]; then
+    if [[ "$PASSWD" == "disabled" ]]; then
+      adduser --disabled-password --gecos "" $USER
+    elif [[ "$PASSWD" == "" ]]; then
+      adduser $USER
+    else
+      adduser $USER
+      ./submodules/deploykeys/passwd $USER $PASSWD
+    fi
+  else
+    useradd $USER
+    if [[ "$PASSWD" != "disabled" ]] && [[ "$PASSWD" != "" ]]; then
+      ./submodules/deploykeys/passwd $USER $PASSWD
+    fi
+  fi
+fi
+
+if [[ "$SSHKEYS" == true ]]; then
+  if [[ ! -e /home/$USER/.ssh/id_dsa ]]; then
+    DIR=/home/$USER/.ssh USER=$USER GROUP=$GROUP ./submodules/bootstrap/mkdir
+    su $USER -c ./submodules/deploykeys/sshkeys /home/$USER/.ssh/id_dsa
+  fi
+elif [[ "$SSHKEYS" != false ]]; then
+  if [[ ! -e /home/$USER/.ssh ]] && [[ -e /home/$SSHKEYS/.ssh ]]; then
+    echo "  -- Copying SSH access from $SSHKEYS to $USER"
+    cp -R /home/deployer/.ssh /home/cenx/.ssh
+    chown -R cenx:cenx /home/cenx/.ssh
+  fi
+fi
+
+

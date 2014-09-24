@@ -16,6 +16,15 @@ DEPLOYKEYS_ADD_BITBUCKET=${DEPLOYKEYS_ADD_BITBUCKET-false}
 
 echo "Installing deploykeys..."
 
+if [[ "`which expect 2> /dev/null`" == "" ]]; then
+  echo "  -- Installing expect"
+  if [[ "$OS" == "redhat" ]]; then
+    yum install expect -y
+  else
+    apt-get install expect -y
+  fi
+fi
+
 USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
 
 mkdir -p ${USER_HOME}/.ssh
