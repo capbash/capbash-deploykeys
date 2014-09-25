@@ -29,6 +29,8 @@ if [[ ! -e /home/$USER ]]; then
       ./submodules/deploykeys/passwd $USER $PASSWD
     fi
   fi
+else
+  echo "  -- $USER user already exists"
 fi
 
 if [[ "$SSHKEYS" == true ]]; then
@@ -37,10 +39,14 @@ if [[ "$SSHKEYS" == true ]]; then
     su $USER -c ./submodules/deploykeys/sshkeys /home/$USER/.ssh/id_dsa
   fi
 elif [[ "$SSHKEYS" != false ]]; then
-  if [[ ! -e /home/$USER/.ssh ]] && [[ -e /home/$SSHKEYS/.ssh ]]; then
+  if [[ ! -e /home/$SSHKEYS/.ssh ]]; then
+    echo "  -- WARNING, unable to copy keys from $SSHKEYS to $USER"
+  elif [[ ! -e /home/$USER/.ssh ]]; then
     echo "  -- Copying SSH access from $SSHKEYS to $USER"
-    cp -R /home/deployer/.ssh /home/cenx/.ssh
-    chown -R cenx:cenx /home/cenx/.ssh
+    cp -R /home/$SSHKEYS/.ssh /home/$USER/.ssh
+    chown -R $USER:$GROUP /home/$USER/.ssh
+  else
+    echo "  -- Keys already setup for $USER"
   fi
 fi
 
