@@ -14,11 +14,17 @@ DEPLOYKEYS_ADD_BITBUCKET=${DEPLOYKEYS_ADD_BITBUCKET-false}
 # Install Script
 #-----------
 
-echo "Installing deploykeys..."
+echo "Installing deploykeys..." >&3
+
+if [[ "$DEBUG" == true ]] ; then
+  exec 3>&1
+else
+  exec 3>&1 &>/dev/null
+fi
 
 if [[ "`which expect 2> /dev/null`" == "" ]]; then
-  echo "  -- Installing expect"
-  if [[ "$OS" == "redhat" ]]; then
+  echo "  -- Installing expect" >&3
+  if [[ "$OS" == "redhat" ]] || [[ "$OS" == "centos" ]]; then
     yum install expect -y
   else
     apt-get install expect -y
@@ -30,13 +36,13 @@ USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
 mkdir -p ${USER_HOME}/.ssh
 
 if [[ -e ./assets/${DEPLOYKEYS_KEYNAME} ]]; then
-  echo "  -- Setting public key ${USER_HOME}/.ssh/${DEPLOYKEYS_KEYNAME}"
+  echo "  -- Setting public key ${USER_HOME}/.ssh/${DEPLOYKEYS_KEYNAME}" >&3
   cp ./assets/${DEPLOYKEYS_KEYNAME} ${USER_HOME}/.ssh/
   cp ./assets/${DEPLOYKEYS_KEYNAME}.pub ${USER_HOME}/.ssh/
 fi
 
 if [[ -e ./assets/${DEPLOYKEYS_KNOWN_HOSTS} ]]; then
-  echo "  -- Setting ${USER_HOME}/.ssh/known_hosts"
+  echo "  -- Setting ${USER_HOME}/.ssh/known_hosts" >&3
   cp ./assets/${DEPLOYKEYS_KNOWN_HOSTS} ${USER_HOME}/.ssh/known_hosts
 fi
 
@@ -48,4 +54,4 @@ if [[ "$DEPLOYKEYS_ADD_BITBUCKET" == true ]]; then
   DEPLOYKEYS_HOSTNAME=bitbucket DEPLOYKEYS_URL=bitbucket.org ./submodules/deploykeys/add
 fi
 
-echo "DONE, Installing deploykeys."
+echo "DONE, Installing deploykeys." >&3
