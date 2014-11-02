@@ -1,4 +1,5 @@
 #!/bin/bash
+source ./submodules/bootstrap/logging
 
 #-----------
 # Configurations
@@ -14,38 +15,53 @@ DEPLOYKEYS_ADD_BITBUCKET=${DEPLOYKEYS_ADD_BITBUCKET-false}
 # Install Script
 #-----------
 
-echo "Installing deploykeys..."
+notify "Installing deploykeys..."
 
 if [[ "`which expect 2> /dev/null`" == "" ]]; then
-  echo "  -- Installing expect"
+  notify "  -- Installing expect"
   if [[ "$OS" == "redhat" ]] || [[ "$OS" == "centos" ]]; then
+    debug "  -- yum install expect -y"
     yum install expect -y
   else
+    debug "  -- apt-get install expect -y"
     apt-get install expect -y
   fi
+else
+  debug "  -- expect already installed"
 fi
 
 USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
+debug "  -- Home directory: $USER_HOME"
 
 mkdir -p ${USER_HOME}/.ssh
 
 if [[ -e ./assets/${DEPLOYKEYS_KEYNAME} ]]; then
-  echo "  -- Setting public key ${USER_HOME}/.ssh/${DEPLOYKEYS_KEYNAME}"
+  notify "  -- Setting public key ${USER_HOME}/.ssh/${DEPLOYKEYS_KEYNAME}"
   cp ./assets/${DEPLOYKEYS_KEYNAME} ${USER_HOME}/.ssh/
   cp ./assets/${DEPLOYKEYS_KEYNAME}.pub ${USER_HOME}/.ssh/
+else
+  debug "  -- No public key provided in ./assets/${DEPLOYKEYS_KEYNAME}"
 fi
 
 if [[ -e ./assets/${DEPLOYKEYS_KNOWN_HOSTS} ]]; then
-  echo "  -- Setting ${USER_HOME}/.ssh/known_hosts"
+  notify "  -- Setting ${USER_HOME}/.ssh/known_hosts"
   cp ./assets/${DEPLOYKEYS_KNOWN_HOSTS} ${USER_HOME}/.ssh/known_hosts
+else
+  debug "  -- No known hosts provided in ./assets/${DEPLOYKEYS_KNOWN_HOSTS}"
 fi
 
 if [[ "$DEPLOYKEYS_ADD_GITHUB" == true ]]; then
+  notify "  -- Adding github hostname"
   DEPLOYKEYS_HOSTNAME=github DEPLOYKEYS_URL=github.com ./submodules/deploykeys/add
+else
+  debug "  -- Skipping github keys"
 fi
 
 if [[ "$DEPLOYKEYS_ADD_BITBUCKET" == true ]]; then
+  notify "  -- Adding bitbucket hostname"
   DEPLOYKEYS_HOSTNAME=bitbucket DEPLOYKEYS_URL=bitbucket.org ./submodules/deploykeys/add
+else
+  debug "  -- Skipping bitbucket keys"
 fi
 
-echo "DONE, Installing deploykeys."
+notify "DONE, Installing deploykeys."
