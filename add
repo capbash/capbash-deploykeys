@@ -1,4 +1,5 @@
 #!/bin/bash
+source ./submodules/bootstrap/logging
 
 #-----------
 # Configurations
@@ -14,5 +15,5 @@ DEPLOYKEYS_HOSTURL=${DEPLOYKEYS_URL-github.com}
 
 USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
 
-echo "  -- Adding $DEPLOYKEYS_HOSTNAME to ${USER_HOME}/.ssh/known_hosts"
+debug "  -- Adding $DEPLOYKEYS_HOSTNAME to ${USER_HOME}/.ssh/known_hosts"
 ssh-keyscan -H $DEPLOYKEYS_HOSTURL 2> /dev/null >> ${USER_HOME}/.ssh/known_hosts

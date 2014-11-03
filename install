@@ -1,5 +1,6 @@
 #!/bin/bash
 source ./submodules/bootstrap/logging
+set -euo pipefail ; IFS=$'\n\t'
 
 #-----------
 # Configurations
@@ -51,14 +52,12 @@ else
 fi
 
 if [[ "$DEPLOYKEYS_ADD_GITHUB" == true ]]; then
-  notify "  -- Adding github hostname"
   DEPLOYKEYS_HOSTNAME=github DEPLOYKEYS_URL=github.com ./submodules/deploykeys/add
 else
   debug "  -- Skipping github keys"
 fi
 
 if [[ "$DEPLOYKEYS_ADD_BITBUCKET" == true ]]; then
-  notify "  -- Adding bitbucket hostname"
   DEPLOYKEYS_HOSTNAME=bitbucket DEPLOYKEYS_URL=bitbucket.org ./submodules/deploykeys/add
 else
   debug "  -- Skipping bitbucket keys"

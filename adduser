@@ -1,4 +1,5 @@
 #!/bin/bash
+source ./submodules/bootstrap/logging
 
 #-----------
 # Configurations
@@ -13,7 +14,7 @@ SSHKEYS=${SSHKEYS=false}
 #-----------
 
 if [[ ! -e /home/$USER ]]; then
-  echo "  -- Creating $USER user"
+  notify "  -- Creating $USER user"
   if [[ "$OS" == "ubuntu" ]]; then
     if [[ "$PASSWD" == "disabled" ]]; then
       adduser --disabled-password --gecos "" $USER
@@ -30,7 +31,7 @@ if [[ ! -e /home/$USER ]]; then
     fi
   fi
 else
-  echo "  -- $USER user already exists"
+  debug "  -- $USER user already exists"
 fi
 
 if [[ "$SSHKEYS" == true ]]; then
@@ -40,13 +41,13 @@ if [[ "$SSHKEYS" == true ]]; then
   fi
 elif [[ "$SSHKEYS" != false ]]; then
   if [[ ! -e /home/$SSHKEYS/.ssh ]]; then
-    echo "  -- WARNING, unable to copy keys from $SSHKEYS to $USER"
+    warn "  -- WARNING, unable to copy keys from $SSHKEYS to $USER"
   elif [[ ! -e /home/$USER/.ssh ]]; then
-    echo "  -- Copying SSH access from $SSHKEYS to $USER"
+    notify "  -- Copying SSH access from $SSHKEYS to $USER"
     cp -R /home/$SSHKEYS/.ssh /home/$USER/.ssh
     chown -R $USER:$GROUP /home/$USER/.ssh
   else
-    echo "  -- Keys already setup for $USER"
+    debug "  -- Keys already setup for $USER"
   fi
 fi
 
