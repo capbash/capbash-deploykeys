@@ -18,14 +18,22 @@ DEPLOYKEYS_ADD_BITBUCKET=${DEPLOYKEYS_ADD_BITBUCKET-false}
 
 notify "Installing deploykeys..."
 
+if [[ "$LOGLEVEL" -le "$DEBUG_LEVEL" ]]; then
+  DEPLOYKEYS_OUTPUT=/tmp/docker_install.log
+else
+  DEPLOYKEYS_OUTPUT=/dev/null
+fi
+
 if [[ "`which expect 2> /dev/null`" == "" ]]; then
   notify "  -- Installing expect"
   if [[ "$OS" == "redhat" ]] || [[ "$OS" == "centos" ]]; then
     debug "  -- yum install expect -y"
-    yum install expect -y
+    yum install expect -y 2>&1 > $DEPLOYKEYS_OUTPUT
+    debug_all $DEPLOYKEYS_OUTPUT
   else
     debug "  -- apt-get install expect -y"
-    apt-get install expect -y
+    DEBIAN_FRONTEND=noninteractive apt-get install expect -y 2>&1 > $DEPLOYKEYS_OUTPUT
+    debug_all $DEPLOYKEYS_OUTPUT
   fi
 else
   debug "  -- expect already installed"
