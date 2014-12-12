@@ -28,11 +28,11 @@ if [[ "`which expect 2> /dev/null`" == "" ]]; then
   notify "  -- Installing expect"
   if [[ "$OS" == "redhat" ]] || [[ "$OS" == "centos" ]]; then
     debug "  -- yum install expect -y"
-    yum install expect -y 2>&1 > $DEPLOYKEYS_OUTPUT
+    yum install expect -y > $DEPLOYKEYS_OUTPUT 2>&1
     debug_all $DEPLOYKEYS_OUTPUT
   else
     debug "  -- apt-get install expect -y"
-    DEBIAN_FRONTEND=noninteractive apt-get install expect -y 2>&1 > $DEPLOYKEYS_OUTPUT
+    DEBIAN_FRONTEND=noninteractive apt-get install expect -y > $DEPLOYKEYS_OUTPUT 2>&1
     debug_all $DEPLOYKEYS_OUTPUT
   fi
 else
