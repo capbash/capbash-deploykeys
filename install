@@ -1,6 +1,6 @@
 #!/bin/bash
 [[ -z "$INFO_LEVEL" ]] && source ./submodules/bootstrap/logging
-set -euo pipefail ; IFS=$'\n\t'
+# set -euo pipefail ; IFS=$'\n\t'
 
 #-----------
 # Configurations
@@ -39,7 +39,20 @@ else
   debug "  -- expect already installed"
 fi
 
-USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
+if [[ "`which wget 2> /dev/null`" == "" ]]; then
+  debug "  -- Using getent to find home directory of $DEPLOYKEYS_USER"
+  USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
+elif [[ "$DEPLOYKEYS_USER" == root  ]]; then
+  debug "  -- Assuming /root home directory for $DEPLOYKEYS_USER"
+  USER_HOME=/root
+elif [[ "$DEPLOYKEYS_USER" == "$USER" ]]; then
+  debug "  -- Using \$HOME as the home directory current user $USER"
+  USER_HOME=$HOME
+else
+  error "Unable to determine the home directory of $DEPLOYKEYS_USER"
+  exit 1
+fi
+
 debug "  -- Home directory: $USER_HOME"
 
 mkdir -p ${USER_HOME}/.ssh
