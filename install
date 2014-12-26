@@ -39,12 +39,15 @@ else
   debug "  -- expect already installed"
 fi
 
-if [[ "`which wget 2> /dev/null`" == "" ]]; then
+if [[ "`which getent 2> /dev/null`" == "" ]]; then
   debug "  -- Using getent to find home directory of $DEPLOYKEYS_USER"
   USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
 elif [[ "$DEPLOYKEYS_USER" == root  ]]; then
   debug "  -- Assuming /root home directory for $DEPLOYKEYS_USER"
   USER_HOME=/root
+elif [[ -e "/home/$DEPLOYKEYS_USER" ]]; then
+  debug "  -- Assuming /home/$DEPLOYKEYS_USER home directory for $DEPLOYKEYS_USER"
+  USER_HOME=/home/$DEPLOYKEYS_USER
 elif [[ "$DEPLOYKEYS_USER" == "$USER" ]]; then
   debug "  -- Using \$HOME as the home directory current user $USER"
   USER_HOME=$HOME
