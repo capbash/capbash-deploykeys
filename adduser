@@ -37,7 +37,7 @@ fi
 
 if [[ "$SSHKEYS" == true ]]; then
   if [[ ! -e /home/$USER/.ssh/id_dsa ]]; then
-    DIR=/home/$USER/.ssh USER=$USER GROUP=$GROUP ./submodules/bootstrap/mkdir
+    OWNER="$USER:$GROUP" ./submodules/bootstrap/mkdir /home/$USER/.ssh
     su $USER -c ./submodules/deploykeys/sshkeys /home/$USER/.ssh/id_dsa
   fi
 elif [[ "$SSHKEYS" != false ]]; then
