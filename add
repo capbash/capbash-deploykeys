@@ -14,7 +14,7 @@ DEPLOYKEYS_HOSTURL=${DEPLOYKEYS_URL-github.com}
 # Configurations
 #-----------
 
-if [[ "`which getent 2> /dev/null`" == "" ]]; then
+if [[ "`which getent 2> /dev/null`" != "" ]]; then
   debug "  -- Using getent to find home directory of $DEPLOYKEYS_USER"
   USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
 elif [[ "$DEPLOYKEYS_USER" == root  ]]; then
