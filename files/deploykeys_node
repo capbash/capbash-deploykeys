@@ -1,2 +1,2 @@
 #!/bin/bash
-./submodules/deploykeys/install
+./bits/deploykeys/install

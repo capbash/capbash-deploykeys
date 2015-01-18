@@ -1,5 +1,5 @@
 #!/bin/bash
-[[ -z "$INFO_LEVEL" ]] && source ./submodules/bootstrap/logging
+[[ -z "$INFO_LEVEL" ]] && source ./bits/bootstrap/logging
 set -euo pipefail ; IFS=$'\n\t'
 
 #-----------
@@ -23,12 +23,12 @@ if [[ ! -e /home/$USER ]]; then
       adduser $USER
     else
       adduser $USER
-      ./submodules/deploykeys/passwd $USER $PASSWD
+      ./bits/deploykeys/passwd $USER $PASSWD
     fi
   else
     useradd $USER
     if [[ "$PASSWD" != "disabled" ]] && [[ "$PASSWD" != "" ]]; then
-      ./submodules/deploykeys/passwd $USER $PASSWD
+      ./bits/deploykeys/passwd $USER $PASSWD
     fi
   fi
 else
@@ -37,8 +37,8 @@ fi
 
 if [[ "$SSHKEYS" == true ]]; then
   if [[ ! -e /home/$USER/.ssh/id_dsa ]]; then
-    OWNER="$USER:$GROUP" ./submodules/bootstrap/mkdir /home/$USER/.ssh
-    su $USER -c ./submodules/deploykeys/sshkeys /home/$USER/.ssh/id_dsa
+    OWNER="$USER:$GROUP" ./bits/bootstrap/mkdir /home/$USER/.ssh
+    su $USER -c ./bits/deploykeys/sshkeys /home/$USER/.ssh/id_dsa
   fi
 elif [[ "$SSHKEYS" != false ]]; then
   if [[ ! -e /home/$SSHKEYS/.ssh ]]; then

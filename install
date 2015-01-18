@@ -1,5 +1,5 @@
 #!/bin/bash
-[[ -z "$INFO_LEVEL" ]] && source ./submodules/bootstrap/logging
+[[ -z "$INFO_LEVEL" ]] && source ./bits/bootstrap/logging
 # set -euo pipefail ; IFS=$'\n\t'
 
 #-----------
@@ -76,13 +76,13 @@ else
 fi
 
 if [[ "$DEPLOYKEYS_ADD_GITHUB" == true ]]; then
-  DEPLOYKEYS_USER=$DEPLOYKEYS_USER DEPLOYKEYS_HOSTNAME=github DEPLOYKEYS_URL=github.com ./submodules/deploykeys/add
+  DEPLOYKEYS_USER=$DEPLOYKEYS_USER DEPLOYKEYS_HOSTNAME=github DEPLOYKEYS_URL=github.com ./bits/deploykeys/add
 else
   debug "  -- Skipping github keys"
 fi
 
 if [[ "$DEPLOYKEYS_ADD_BITBUCKET" == true ]]; then
-  DEPLOYKEYS_USER=$DEPLOYKEYS_USER DEPLOYKEYS_HOSTNAME=bitbucket DEPLOYKEYS_URL=bitbucket.org ./submodules/deploykeys/add
+  DEPLOYKEYS_USER=$DEPLOYKEYS_USER DEPLOYKEYS_HOSTNAME=bitbucket DEPLOYKEYS_URL=bitbucket.org ./bits/deploykeys/add
 else
   debug "  -- Skipping bitbucket keys"
 fi

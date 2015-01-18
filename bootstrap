@@ -1,7 +1,7 @@
 #!/bin/bash
 mkdir -p ./nodes
 
-cp ./submodules/deploykeys/files/deploykeys_node ./nodes/deploykeys
+cp ./bits/deploykeys/files/deploykeys_node ./nodes/deploykeys
 chmod 755 ./nodes/deploykeys
 
 if ! [ -e ./assets/id_dsa ] && [ -e ~/.ssh/id_dsa ]; then
