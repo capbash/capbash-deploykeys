@@ -25,7 +25,7 @@ capbash install deploykeys
 The available configurations include:
 
 ```
-DEPLOYKEYS_USER=${DEPLOYKEYS_NAME-root}
+LAUNCHER_OWNER=${DEPLOYKEYS_NAME-root}
 DEPLOYKEYS_KEYNAME=${DEPLOYKEYS_KEYNAME-id_dsa}
 DEPLOYKEYS_KNOWN_HOSTS=${DEPLOYKEYS_NAME-known_hosts}
 ```

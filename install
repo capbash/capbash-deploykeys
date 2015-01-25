@@ -6,7 +6,8 @@
 # Configurations
 #-----------
 
-DEPLOYKEYS_USER=${DEPLOYKEYS_USER-root}
+LAUNCHER_OWNER=${LAUNCHER_OWNER-root}
+LAUNCHER_PASSWORD=${LAUNCHER_OWNER-ruF1ngK1dd1ng}
 DEPLOYKEYS_KEYNAME=${DEPLOYKEYS_KEYNAME-id_dsa}
 DEPLOYKEYS_KNOWN_HOSTS=${DEPLOYKEYS_KNOWN_HOSTS-known_hosts}
 DEPLOYKEYS_ADD_GITHUB=${DEPLOYKEYS_ADD_GITHUB-false}
@@ -39,20 +40,27 @@ else
   debug "  -- expect already installed"
 fi
 
+if [[ "$USER" == "$LAUNCHER_OWNER" ]]; then
+  debug " -- User $LAUNCHER_OWNER exists, nothing to do"
+else
+  GROUP=www-data USER=$LAUNCHER_OWNER PASSWD=$LAUNCHER_PASSWORD SSHKEYS=true ./bits/deploykeys/adduser
+  [ $? -ne 0 ] && exit 1
+fi
+
 if [[ "`which getent 2> /dev/null`" != "" ]]; then
-  debug "  -- Using getent to find home directory of $DEPLOYKEYS_USER"
-  USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
-elif [[ "$DEPLOYKEYS_USER" == root  ]]; then
-  debug "  -- Assuming /root home directory for $DEPLOYKEYS_USER"
+  debug "  -- Using getent to find home directory of $LAUNCHER_OWNER"
+  USER_HOME="$(getent passwd $LAUNCHER_OWNER | awk -F ':' '{print $6}')"
+elif [[ "$LAUNCHER_OWNER" == root  ]]; then
+  debug "  -- Assuming /root home directory for $LAUNCHER_OWNER"
   USER_HOME=/root
-elif [[ -e "/home/$DEPLOYKEYS_USER" ]]; then
-  debug "  -- Assuming /home/$DEPLOYKEYS_USER home directory for $DEPLOYKEYS_USER"
-  USER_HOME=/home/$DEPLOYKEYS_USER
-elif [[ "$DEPLOYKEYS_USER" == "$USER" ]]; then
+elif [[ -e "/home/$LAUNCHER_OWNER" ]]; then
+  debug "  -- Assuming /home/$LAUNCHER_OWNER home directory for $LAUNCHER_OWNER"
+  USER_HOME=/home/$LAUNCHER_OWNER
+elif [[ "$LAUNCHER_OWNER" == "$USER" ]]; then
   debug "  -- Using \$HOME as the home directory current user $USER"
   USER_HOME=$HOME
 else
-  error "Unable to determine the home directory of $DEPLOYKEYS_USER"
+  error "Unable to determine the home directory of $LAUNCHER_OWNER"
   exit 1
 fi
 
@@ -76,13 +84,13 @@ else
 fi
 
 if [[ "$DEPLOYKEYS_ADD_GITHUB" == true ]]; then
-  DEPLOYKEYS_USER=$DEPLOYKEYS_USER DEPLOYKEYS_HOSTNAME=github DEPLOYKEYS_URL=github.com ./bits/deploykeys/add
+  LAUNCHER_OWNER=$LAUNCHER_OWNER DEPLOYKEYS_HOSTNAME=github DEPLOYKEYS_URL=github.com ./bits/deploykeys/add
 else
   debug "  -- Skipping github keys"
 fi
 
 if [[ "$DEPLOYKEYS_ADD_BITBUCKET" == true ]]; then
-  DEPLOYKEYS_USER=$DEPLOYKEYS_USER DEPLOYKEYS_HOSTNAME=bitbucket DEPLOYKEYS_URL=bitbucket.org ./bits/deploykeys/add
+  LAUNCHER_OWNER=$LAUNCHER_OWNER DEPLOYKEYS_HOSTNAME=bitbucket DEPLOYKEYS_URL=bitbucket.org ./bits/deploykeys/add
 else
   debug "  -- Skipping bitbucket keys"
 fi

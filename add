@@ -6,7 +6,7 @@ set -euo pipefail ; IFS=$'\n\t'
 # Configurations
 #-----------
 
-DEPLOYKEYS_USER=${DEPLOYKEYS_NAME-root}
+LAUNCHER_OWNER=${DEPLOYKEYS_NAME-root}
 DEPLOYKEYS_HOSTNAME=${DEPLOYKEYS_URL-github}
 DEPLOYKEYS_HOSTURL=${DEPLOYKEYS_URL-github.com}
 
@@ -15,19 +15,19 @@ DEPLOYKEYS_HOSTURL=${DEPLOYKEYS_URL-github.com}
 #-----------
 
 if [[ "`which getent 2> /dev/null`" != "" ]]; then
-  debug "  -- Using getent to find home directory of $DEPLOYKEYS_USER"
-  USER_HOME="$(getent passwd $DEPLOYKEYS_USER | awk -F ':' '{print $6}')"
-elif [[ "$DEPLOYKEYS_USER" == root  ]]; then
-  debug "  -- Assuming /root home directory for $DEPLOYKEYS_USER"
+  debug "  -- Using getent to find home directory of $LAUNCHER_OWNER"
+  USER_HOME="$(getent passwd $LAUNCHER_OWNER | awk -F ':' '{print $6}')"
+elif [[ "$LAUNCHER_OWNER" == root  ]]; then
+  debug "  -- Assuming /root home directory for $LAUNCHER_OWNER"
   USER_HOME=/root
-elif [[ -e "/home/$DEPLOYKEYS_USER" ]]; then
-  debug "  -- Assuming /home/$DEPLOYKEYS_USER home directory for $DEPLOYKEYS_USER"
-  USER_HOME=/home/$DEPLOYKEYS_USER
-elif [[ "$DEPLOYKEYS_USER" == "$USER" ]]; then
+elif [[ -e "/home/$LAUNCHER_OWNER" ]]; then
+  debug "  -- Assuming /home/$LAUNCHER_OWNER home directory for $LAUNCHER_OWNER"
+  USER_HOME=/home/$LAUNCHER_OWNER
+elif [[ "$LAUNCHER_OWNER" == "$USER" ]]; then
   debug "  -- Using \$HOME as the home directory current user $USER"
   USER_HOME=$HOME
 else
-  error "Unable to determine the home directory of $DEPLOYKEYS_USER"
+  error "Unable to determine the home directory of $LAUNCHER_OWNER"
   exit 1
 fi
 

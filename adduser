@@ -9,27 +9,34 @@ set -euo pipefail ; IFS=$'\n\t'
 USER=${USER-deployer}
 GROUP=${GROUP-www-data}
 SSHKEYS=${SSHKEYS=false}
+PASSWD=${PASSWD-asdf1234}
 
 #-----------
 # Install Script
 #-----------
 
-if [[ ! -e /home/$USER ]]; then
+ADDUSER_OUTPUT=/tmp/adduser.log
+
+if [[ "`id -u $LAUNCHER_OWNER 2>/dev/null`" == "" ]]; then
   notify "  -- Creating $USER user"
   if [[ "$OS" == "ubuntu" ]]; then
-    if [[ "$PASSWD" == "disabled" ]]; then
-      adduser --disabled-password --gecos "" $USER
-    elif [[ "$PASSWD" == "" ]]; then
-      adduser $USER
-    else
-      adduser $USER
-      ./bits/deploykeys/passwd $USER $PASSWD
-    fi
+    SCRIPT_OUTPUT=$(adduser --disabled-password --gecos "" $USER > $ADDUSER_OUTPUT 2>&1)
+    ERROR="Unable add user $USER due to ..." ./bits/bootstrap/failonerrors $? $ADDUSER_OUTPUT
+    [ $? -ne 0 ] && exit 1
   else
-    useradd $USER
-    if [[ "$PASSWD" != "disabled" ]] && [[ "$PASSWD" != "" ]]; then
-      ./bits/deploykeys/passwd $USER $PASSWD
-    fi
+    SCRIPT_OUTPUT=$(useradd $USER > $ADDUSER_OUTPUT 2>&1)
+    ERROR="Unable add user $USER due to ..." ./bits/bootstrap/failonerrors $? $ADDUSER_OUTPUT
+    [ $? -ne 0 ] && exit 1
+  fi
+
+  if [[ "$PASSWD" == "disabled" ]] || [[ "$PASSWD" == "" ]]; then
+    debug "  -- No password set"
+  else
+    notify "  -- Creating password"
+
+    SCRIPT_OUTPUT=$(./bits/deploykeys/passwd $USER $PASSWD > $ADDUSER_OUTPUT 2>&1)
+    ERROR="Unable set password due to ..." ./bits/bootstrap/failonerrors $? $ADDUSER_OUTPUT
+    [ $? -ne 0 ] && exit 1
   fi
 else
   debug "  -- $USER user already exists"
