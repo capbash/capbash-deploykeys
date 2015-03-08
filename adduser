@@ -6,7 +6,7 @@ set -euo pipefail ; IFS=$'\n\t'
 # Configurations
 #-----------
 
-USER=${USER-deployer}
+LAUNCHER_OWNER=${LAUNCHER_OWNER-deployer}
 GROUP=${GROUP-www-data}
 SSHKEYS=${SSHKEYS=false}
 PASSWD=${PASSWD-asdf1234}
@@ -18,14 +18,14 @@ PASSWD=${PASSWD-asdf1234}
 ADDUSER_OUTPUT=/tmp/adduser.log
 
 if [[ "`id -u $LAUNCHER_OWNER 2>/dev/null`" == "" ]]; then
-  notify "  -- Creating $USER user"
+  notify "  -- Creating $LAUNCHER_OWNER user"
   if [[ "$OS" == "ubuntu" ]]; then
-    SCRIPT_OUTPUT=$(adduser --disabled-password --gecos "" $USER > $ADDUSER_OUTPUT 2>&1)
-    ERROR="Unable add user $USER due to ..." ./bits/bootstrap/failonerrors $? $ADDUSER_OUTPUT
+    SCRIPT_OUTPUT=$(adduser --disabled-password --gecos "" $LAUNCHER_OWNER > $ADDUSER_OUTPUT 2>&1)
+    ERROR="Unable add user $LAUNCHER_OWNER due to ..." ./bits/bootstrap/failonerrors $? $ADDUSER_OUTPUT
     [ $? -ne 0 ] && exit 1
   else
-    SCRIPT_OUTPUT=$(useradd $USER > $ADDUSER_OUTPUT 2>&1)
-    ERROR="Unable add user $USER due to ..." ./bits/bootstrap/failonerrors $? $ADDUSER_OUTPUT
+    SCRIPT_OUTPUT=$(useradd $LAUNCHER_OWNER > $ADDUSER_OUTPUT 2>&1)
+    ERROR="Unable add user $LAUNCHER_OWNER due to ..." ./bits/bootstrap/failonerrors $? $ADDUSER_OUTPUT
     [ $? -ne 0 ] && exit 1
   fi
 
@@ -34,28 +34,28 @@ if [[ "`id -u $LAUNCHER_OWNER 2>/dev/null`" == "" ]]; then
   else
     notify "  -- Creating password"
 
-    SCRIPT_OUTPUT=$(./bits/deploykeys/passwd $USER $PASSWD > $ADDUSER_OUTPUT 2>&1)
+    SCRIPT_OUTPUT=$(./bits/deploykeys/passwd $LAUNCHER_OWNER $PASSWD > $ADDUSER_OUTPUT 2>&1)
     ERROR="Unable set password due to ..." ./bits/bootstrap/failonerrors $? $ADDUSER_OUTPUT
     [ $? -ne 0 ] && exit 1
   fi
 else
-  debug "  -- $USER user already exists"
+  debug "  -- $LAUNCHER_OWNER user already exists"
 fi
 
 if [[ "$SSHKEYS" == true ]]; then
-  if [[ ! -e /home/$USER/.ssh/id_dsa ]]; then
-    OWNER="$USER:$GROUP" ./bits/bootstrap/mkdir /home/$USER/.ssh
-    su $USER -c ./bits/deploykeys/sshkeys /home/$USER/.ssh/id_dsa
+  if [[ ! -e /home/$LAUNCHER_OWNER/.ssh/id_dsa ]]; then
+    OWNER="$LAUNCHER_OWNER:$GROUP" ./bits/bootstrap/mkdir /home/$LAUNCHER_OWNER/.ssh
+    su $LAUNCHER_OWNER -c ./bits/deploykeys/sshkeys /home/$LAUNCHER_OWNER/.ssh/id_dsa
   fi
 elif [[ "$SSHKEYS" != false ]]; then
   if [[ ! -e /home/$SSHKEYS/.ssh ]]; then
-    warn "  -- WARNING, unable to copy keys from $SSHKEYS to $USER"
-  elif [[ ! -e /home/$USER/.ssh ]]; then
-    notify "  -- Copying SSH access from $SSHKEYS to $USER"
-    cp -R /home/$SSHKEYS/.ssh /home/$USER/.ssh
-    chown -R $USER:$GROUP /home/$USER/.ssh
+    warn "  -- WARNING, unable to copy keys from $SSHKEYS to $LAUNCHER_OWNER"
+  elif [[ ! -e /home/$LAUNCHER_OWNER/.ssh ]]; then
+    notify "  -- Copying SSH access from $SSHKEYS to $LAUNCHER_OWNER"
+    cp -R /home/$SSHKEYS/.ssh /home/$LAUNCHER_OWNER/.ssh
+    chown -R $LAUNCHER_OWNER:$GROUP /home/$LAUNCHER_OWNER/.ssh
   else
-    debug "  -- Keys already setup for $USER"
+    debug "  -- Keys already setup for $LAUNCHER_OWNER"
   fi
 fi
 
