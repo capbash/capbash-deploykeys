@@ -18,7 +18,7 @@ SSHKEYS=${SSHKEYS=false}
 # Install Script
 #-----------
 
-notify "Installing deploykeys..."
+notify "Installing deploykeys ..."
 
 if [[ "$LOGLEVEL" -le "$DEBUG_LEVEL" ]]; then
   DEPLOYKEYS_OUTPUT=/tmp/deploykeys_install.log
@@ -48,7 +48,7 @@ fi
 if [[ "$USER" == "$LAUNCHER_OWNER" ]]; then
   debug " -- User $LAUNCHER_OWNER exists, nothing to do"
 else
-  GROUP=www-data USER=$LAUNCHER_OWNER PASSWD=$LAUNCHER_PASSWORD SSHKEYS=true ./bits/deploykeys/adduser
+  GROUP=www-data LAUNCHER_OWNER=$LAUNCHER_OWNER PASSWD=$LAUNCHER_PASSWORD SSHKEYS=true ./bits/deploykeys/adduser
   [ $? -ne 0 ] && exit 1
 fi
 

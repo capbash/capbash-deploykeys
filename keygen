@@ -24,7 +24,7 @@ if [[ -e $TARGET_PUBLIC_KEY ]]; then
   debug "  -- SSH keys already setup in $TARGET_PUBLIC_KEY"
 
 elif [[ -e $SOURCE_PUBLIC_KEY ]] && [[ -e $SOURCE_PRIVATE_KEY ]]; then
-  notify "  -- Using keys from $SOURCE_PUBLIC_KEY"
+  notify "  -- Using keys from $SOURCE_PUBLIC_KEY ($OWNER)"
   OWNER=$OWNER ./bits/bootstrap/mkdir $TARGET_DIR
   OWNER=$OWNER ./bits/bootstrap/cp $SOURCE_PRIVATE_KEY $TARGET_PRIVATE_KEY
   OWNER=$OWNER ./bits/bootstrap/cp $SOURCE_PUBLIC_KEY $TARGET_PUBLIC_KEY
