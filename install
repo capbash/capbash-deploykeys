@@ -26,16 +26,8 @@ else
   DEPLOYKEYS_OUTPUT=/dev/null
 fi
 
-if [[ "$SSHKEYS" == true ]] && [[ ! -e ${HOME}/.ssh/id_dsa ]]; then
-  notify "  -- Creating ssh keys ${HOME}/.ssh/id_dsa"
-  mkdir -p ${HOME}/.ssh
-  SCRIPT_OUTPUT=$(ssh-keygen -t dsa -N "" -f ${HOME}/.ssh/id_dsa > $DEPLOYKEYS_OUTPUT 2>&1)
-  ERROR="Unable create ssh keys for $USER ..." ./bits/bootstrap/failonerrors $? $DEPLOYKEYS_OUTPUT
-  [ $? -ne 0 ] && exit 1
-elif [[ "$SSHKEYS" != true ]]; then
-  warn "  -- Ignoring SSH keys check for $USER, set SSHKEYS=true if you want to check for and create SSH keys."
-else
-  debug "  -- SSH keys already setup for $USER (${HOME}/.ssh/id_dsa)"
+if [[ "$SSHKEYS" == true ]]; then
+  OWNER=$USER TARGET_DIR=$HOME/.ssh ./bits/deploykeys/keygen
 fi
 
 if [[ "`which expect 2> /dev/null`" == "" ]]; then
@@ -80,14 +72,6 @@ fi
 debug "  -- Home directory: $USER_HOME"
 
 mkdir -p ${USER_HOME}/.ssh
-
-if [[ -e ./assets/${DEPLOYKEYS_KEYNAME} ]]; then
-  notify "  -- Setting public key ${USER_HOME}/.ssh/${DEPLOYKEYS_KEYNAME}"
-  cp ./assets/${DEPLOYKEYS_KEYNAME} ${USER_HOME}/.ssh/
-  cp ./assets/${DEPLOYKEYS_KEYNAME}.pub ${USER_HOME}/.ssh/
-else
-  debug "  -- No public key provided in ./assets/${DEPLOYKEYS_KEYNAME}"
-fi
 
 if [[ -e ./assets/${DEPLOYKEYS_KNOWN_HOSTS} ]]; then
   notify "  -- Setting ${USER_HOME}/.ssh/known_hosts"

@@ -43,10 +43,7 @@ else
 fi
 
 if [[ "$SSHKEYS" == true ]]; then
-  if [[ ! -e /home/$LAUNCHER_OWNER/.ssh/id_dsa ]]; then
-    OWNER="$LAUNCHER_OWNER:$GROUP" ./bits/bootstrap/mkdir /home/$LAUNCHER_OWNER/.ssh
-    su $LAUNCHER_OWNER -c ./bits/deploykeys/sshkeys /home/$LAUNCHER_OWNER/.ssh/id_dsa
-  fi
+  OWNER=$USER TARGET_DIR=/home/$LAUNCHER_OWNER/.ssh ./bits/deploykeys/keygen
 elif [[ "$SSHKEYS" != false ]]; then
   if [[ ! -e /home/$SSHKEYS/.ssh ]]; then
     warn "  -- WARNING, unable to copy keys from $SSHKEYS to $LAUNCHER_OWNER"
